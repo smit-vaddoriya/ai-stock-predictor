@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FinSight AI
 
-## Getting Started
+AI-powered financial intelligence platform: stock analysis, portfolio
+management, AI forecasting, news sentiment, an AI financial assistant,
+document RAG, risk analysis, budgeting, paper trading, backtesting, and
+subscriptions.
 
-First, run the development server:
+This repo is a pnpm/Turborepo monorepo currently at the **foundation**
+stage — architecture, auth, database schema, API/AI-service scaffolding,
+and a dashboard shell are in place. Feature implementation is intentionally
+not built out yet; see `docs/` for what exists and why.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+TypeScript, Next.js 15, React 19, Tailwind CSS, shadcn/ui, PostgreSQL,
+Prisma, Redis, Python/FastAPI, Docker, Zod, TanStack Query, React Hook
+Form, Stripe (planned), Vitest, Playwright, pytest.
+
+## Structure
+
+```
+apps/web           Next.js app (UI + REST API)
+apps/ai-service     FastAPI service (prediction/sentiment/risk/backtesting/rag/agents)
+packages/database   Prisma schema + client + seed
+packages/shared     zod schemas, shared types, constants, Redis, rate limiting
+packages/config     shared tsconfig/eslint base
+services/           planned standalone workers (market-data, notifications, jobs)
+infrastructure/docker  Dockerfiles for web + ai-service
+tests/e2e           Playwright smoke tests
+docs/               architecture, API, AI service, and database notes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+corepack enable        # or: npm install -g pnpm
+pnpm install
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+cp .env.example .env    # fill in DATABASE_URL/SESSION_SECRET etc.
+docker compose up -d postgres redis
 
-## Learn More
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
 
-To learn more about Next.js, take a look at the following resources:
+pnpm dev                # apps/web on :3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+AI service:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+cd apps/ai-service
+python -m venv .venv
+.venv/Scripts/activate   # source .venv/bin/activate on macOS/Linux
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
-## Deploy on Vercel
+## Checks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm lint
+pnpm typecheck
+pnpm build
+pnpm test                        # Vitest (apps/web, packages/shared)
+pnpm --filter @finsight/e2e test # Playwright (requires the dev server)
+cd apps/ai-service && pytest
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Default seeded login
+
+`admin@finsight.local` / `ChangeMe123!` — change this before deploying
+anywhere real.

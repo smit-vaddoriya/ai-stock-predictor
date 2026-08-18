@@ -3,31 +3,49 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --bg-primary: #0b0e14;
+  --bg-panel: #12161f;
+  --bg-panel-hover: #171c28;
+  --border-subtle: #232838;
+  --text-primary: #e8eaed;
+  --text-muted: #8b93a7;
+  --accent-gain: #34d399;
+  --accent-loss: #f87171;
+  --accent-brand: #6366f1;
+  --accent-brand-hover: #818cf8;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.font-mono-data {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 30s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
   }
 }
