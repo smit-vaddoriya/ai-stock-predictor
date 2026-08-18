@@ -3,7 +3,16 @@ import Groq from "groq-sdk";
 import { getUserFromRequest } from "@/lib/auth";
 import { toolDefinitions, executeTool } from "@/lib/agentTools";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let groq: Groq | undefined;
+function getGroqClient(): Groq {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY is not set");
+  }
+  if (!groq) {
+    groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return groq;
+}
 
 interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool";
@@ -39,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const MAX_TOOL_ROUNDS = 5;
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-      const completion = await groq.chat.completions.create({
+      const completion = await getGroqClient().chat.completions.create({
         model: "openai/gpt-oss-120b",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messages: conversation as any,
