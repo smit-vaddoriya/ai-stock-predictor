@@ -16,14 +16,12 @@
     "bcryptjs": "^2.4.3",
     "groq-sdk": "^1.5.0",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "6.8",
     "next": "14.2.5",
     "pg": "^8.23.0",
     "prisma": "^7.9.1",
     "react": "^18",
     "react-dom": "^18",
-    "recharts": "^2.12.7",
-    "yahoo-finance2": "^2.11.3"
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
